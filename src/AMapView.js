@@ -16,7 +16,6 @@ class AMapView extends React.Component {
     mapType: PropTypes.oneOf(['normal', 'satellite', 'night', 'navi']),
     myLocationEnabled: PropTypes.bool,
     myLocationType: PropTypes.oneOf(['locate', 'follow', 'rotate']),
-    myLocationRotateAngle: PropTypes.number,
     myLocationButtonEnabled: PropTypes.bool,
     allGesturesEnabled: PropTypes.bool,
     compassEnabled: PropTypes.bool,
@@ -101,10 +100,10 @@ class AMapView extends React.Component {
     return (
       <RCTAMapView ref="mapview"
         {...this.props}
-        onRegionChange={this._onRegionChange}
-        onMove={this._onMove}
-        onZoom={this._onZoom}
-        onUpdateLocation={this._onUpdateLocation}/>
+        onRegionChange={e => this._onRegionChange(e)}
+        onMove={e => this._onMove(e)}
+        onZoom={e => this._onZoom(e)}
+        onUpdateLocation={e => this._onUpdateLocation(e)}/>
     );
   }
 }

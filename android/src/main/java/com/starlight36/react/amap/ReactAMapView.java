@@ -4,9 +4,13 @@ import android.content.Context;
 import android.location.Location;
 import android.view.View;
 
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMapOptions;
 import com.amap.api.maps.CameraUpdateFactory;
+import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
@@ -23,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ReactAMapView extends MapView implements LifecycleEventListener {
+public class ReactAMapView extends MapView implements LocationSource, LifecycleEventListener {
 
     private final AMapOptions options = new AMapOptions();
     private final ReactContext reactContext;
@@ -32,11 +36,13 @@ public class ReactAMapView extends MapView implements LifecycleEventListener {
 
     private boolean mapLoaded = false;
     private LatLngBounds defaultBounds;
+    private AMapLocationClient locationClient;
 
     public ReactAMapView(Context context) {
         super(context);
         this.reactContext = (ReactContext) getContext();
         this.getMapFragmentDelegate().setOptions(this.options);
+        this.getMap().setLocationSource(this);
         this.setListeners();
     }
 
@@ -81,8 +87,8 @@ public class ReactAMapView extends MapView implements LifecycleEventListener {
         if (view instanceof ReactAMapAnnotationView) {
             ReactAMapAnnotationView annotationView = (ReactAMapAnnotationView) view;
             annotationView.addToAMapView(this);
-            features.add(index, annotationView);
             annotationViewMap.put(annotationView.getFeature(), annotationView);
+            features.add(index, annotationView);
         }
     }
 
@@ -104,18 +110,22 @@ public class ReactAMapView extends MapView implements LifecycleEventListener {
 
     private void setListeners() {
         // 地图加载完成监听器
+        final ReactAMapView mapView = this;
         this.getMap().setOnMapLoadedListener(new AMap.OnMapLoadedListener() {
             @Override
             public void onMapLoaded() {
-                mapLoaded = true;
-                getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(defaultBounds, 0));
+                if (!mapLoaded) {
+                    mapLoaded = true;
+                    getMap().moveCamera(CameraUpdateFactory.newLatLngBounds(defaultBounds, 0));
+                }
             }
         });
 
         // 可视区域改变的监听器
         this.getMap().setOnCameraChangeListener(new AMap.OnCameraChangeListener() {
             @Override
-            public void onCameraChange(CameraPosition cameraPosition) {}
+            public void onCameraChange(CameraPosition cameraPosition) {
+            }
 
             @Override
             public void onCameraChangeFinish(CameraPosition cameraPosition) {
@@ -130,7 +140,7 @@ public class ReactAMapView extends MapView implements LifecycleEventListener {
                 event.putMap("region", region);
                 reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
                         getId(),
-                        "topRegionChange",
+                        "onRegionChange",
                         event
                 );
             }
@@ -140,7 +150,18 @@ public class ReactAMapView extends MapView implements LifecycleEventListener {
         this.getMap().setOnMarkerClickListener(new AMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                return false;
+                if (marker.isInfoWindowShown()) {
+                    marker.hideInfoWindow();
+                } else {
+                    marker.showInfoWindow();
+                }
+                WritableMap event = Arguments.createMap();
+                reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+                        annotationViewMap.get(marker).getId(),
+                        "onPress",
+                        event
+                );
+                return true;
             }
         });
 
@@ -158,10 +179,28 @@ public class ReactAMapView extends MapView implements LifecycleEventListener {
                 event.putBoolean("updatingLocation", true);
                 reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
                         getId(),
-                        "topUpdateLocation",
+                        "onUpdateLocation",
                         event
                 );
             }
         });
+    }
+
+    @Override
+    public void activate(final OnLocationChangedListener onLocationChangedListener) {
+        locationClient = new AMapLocationClient(getContext());
+        locationClient.setLocationListener(new AMapLocationListener() {
+            @Override
+            public void onLocationChanged(AMapLocation aMapLocation) {
+                onLocationChangedListener.onLocationChanged(aMapLocation);
+            }
+        });
+        locationClient.startLocation();
+    }
+
+    @Override
+    public void deactivate() {
+        locationClient.stopLocation();
+        locationClient.onDestroy();
     }
 }

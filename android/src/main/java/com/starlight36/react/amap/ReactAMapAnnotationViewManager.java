@@ -1,13 +1,18 @@
 package com.starlight36.react.amap;
 
 import android.graphics.Color;
-import android.support.annotation.Nullable;
+import android.view.View;
 
 import com.amap.api.maps.model.LatLng;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
+
+import java.util.Map;
+
+import javax.annotation.Nullable;
 
 public class ReactAMapAnnotationViewManager extends ViewGroupManager<ReactAMapAnnotationView> {
 
@@ -73,5 +78,20 @@ public class ReactAMapAnnotationViewManager extends ViewGroupManager<ReactAMapAn
     @ReactProp(name = "coordinate")
     public void setCoordinate(ReactAMapAnnotationView view, ReadableMap map) {
         view.setPosition(new LatLng(map.getDouble("latitude"), map.getDouble("longitude")));
+    }
+
+    @Override
+    public void addView(ReactAMapAnnotationView parent, View child, int index) {
+        if (child instanceof ReactAMapCalloutView) {
+            parent.setCalloutView((ReactAMapCalloutView) child);
+        }
+    }
+
+    @Nullable
+    @Override
+    public Map getExportedCustomDirectEventTypeConstants() {
+        return MapBuilder.of(
+                "onPress", MapBuilder.of("registrationName", "onPress")
+        );
     }
 }

@@ -14,6 +14,6 @@ public class ReactAMapCalloutViewManager extends ViewGroupManager<ReactAMapCallo
 
     @Override
     protected ReactAMapCalloutView createViewInstance(ThemedReactContext reactContext) {
-        return null;
+        return new ReactAMapCalloutView(reactContext);
     }
 }

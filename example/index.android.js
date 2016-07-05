@@ -26,10 +26,19 @@ class Example extends Component {
       <AMapView style={styles.container} compassEnabled={true}
         defaultRegion={{"latitude": 41.0, "longitude": 118.0, "latitudeDelta": 0.5, "longitudeDelta": 0.5}}
         region={{"latitude": this.state.latitude, "longitude": this.state.longitude, "latitudeDelta": 0.5, "longitudeDelta": 0.5}}
-        myLocationEnabled={true}>
+        onRegionChange={(e) => console.log(e)}
+        onUpdateLocation={e => console.log(e)}
+        myLocationEnabled={true}
+        myLocationButtonEnabled={true}>
         <AMapView.Annotation coordinate={{"latitude": 41.0, "longitude": 118.0}}
           title="aaa" subtitle="bbbb" enabled={true} selected={true} canShowCallout={true}
-          onSelect={e => console.log(e)} />
+          onSelect={e => console.log(e)}>
+          <AMapView.Callout>
+            <View style={{ width: 100, height: 40, backgroundColor: '#ffffff'}}>
+              <Text>aaaaaabbbbb</Text>
+            </View>
+          </AMapView.Callout>
+        </AMapView.Annotation>
       </AMapView>
     );
   }

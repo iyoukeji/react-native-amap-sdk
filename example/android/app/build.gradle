@@ -123,6 +123,22 @@ android {
             }
         }
     }
+
+    signingConfigs {
+        debug {
+            storeFile file("example.jks")
+            storePassword "123456"
+            keyAlias "ExampleKey"
+            keyPassword "123456"
+        }
+
+        release {
+            storeFile file("example.jks")
+            storePassword "123456"
+            keyAlias "ExampleKey"
+            keyPassword "123456"
+        }
+    }
 }
 
 dependencies {

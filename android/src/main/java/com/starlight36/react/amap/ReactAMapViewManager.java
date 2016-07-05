@@ -1,18 +1,21 @@
 package com.starlight36.react.amap;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMapOptions;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Nullable;
 
 public class ReactAMapViewManager extends ViewGroupManager<ReactAMapView> {
 
@@ -75,11 +78,6 @@ public class ReactAMapViewManager extends ViewGroupManager<ReactAMapView> {
         } else if (type.equalsIgnoreCase("rotate")) {
             view.getMap().setMyLocationType(AMap.LOCATION_TYPE_MAP_ROTATE);
         }
-    }
-
-    @ReactProp(name = "myLocationRotateAngle")
-    public void setMyLocationRotateAngle(ReactAMapView view, float rotate) {
-        view.getMap().setMyLocationRotateAngle(rotate);
     }
 
     @ReactProp(name = "myLocationButtonEnabled")
@@ -198,4 +196,14 @@ public class ReactAMapViewManager extends ViewGroupManager<ReactAMapView> {
         parent.removeFeatureAt(index);
     }
 
+    @Nullable
+    @Override
+    public Map getExportedCustomDirectEventTypeConstants() {
+        return MapBuilder.of(
+                "onRegionChange", MapBuilder.of("registrationName", "onRegionChange"),
+                "onMove", MapBuilder.of("registrationName", "onMove"),
+                "onZoom", MapBuilder.of("registrationName", "onZoom"),
+                "onUpdateLocation", MapBuilder.of("registrationName", "onUpdateLocation")
+        );
+    }
 }

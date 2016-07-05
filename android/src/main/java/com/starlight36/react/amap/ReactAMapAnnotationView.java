@@ -1,6 +1,7 @@
 package com.starlight36.react.amap;
 
 import android.content.Context;
+import android.view.View;
 
 import com.amap.api.maps.model.BitmapDescriptor;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
@@ -19,15 +20,17 @@ public class ReactAMapAnnotationView extends ReactAMapFeatureView<Marker> {
     private String subtitle;
     private float pinColor = 0.0f;
     private boolean canShowCallout;
-    private Float anchorX;
-    private Float anchorY;
-    private Integer calloutAnchorX;
-    private Integer calloutAnchorY;
+    private float anchorX = 0.5f;
+    private float anchorY = 1;
+    private int calloutAnchorX = 0;
+    private int calloutAnchorY = 0;
     private boolean enabled;
     private boolean highlighted;
     private boolean selected;
     private boolean draggable;
     private LatLng position;
+
+    private ReactAMapCalloutView calloutView;
 
     private boolean hasCallout = false;
 
@@ -86,7 +89,7 @@ public class ReactAMapAnnotationView extends ReactAMapFeatureView<Marker> {
         this.canShowCallout = canShowCallout;
     }
 
-    public void setAnchor(Float anchorX, Float anchorY) {
+    public void setAnchor(float anchorX, float anchorY) {
         this.anchorX = anchorX;
         this.anchorY = anchorY;
         if (marker != null) {
@@ -94,7 +97,7 @@ public class ReactAMapAnnotationView extends ReactAMapFeatureView<Marker> {
         }
     }
 
-    public void setCalloutAnchorX(Integer calloutAnchorX, Integer calloutAnchorY) {
+    public void setCalloutAnchorX(int calloutAnchorX, int calloutAnchorY) {
         this.calloutAnchorX = calloutAnchorX;
         this.calloutAnchorY = calloutAnchorY;
     }
@@ -127,32 +130,26 @@ public class ReactAMapAnnotationView extends ReactAMapFeatureView<Marker> {
         }
     }
 
+    public void setCalloutView(ReactAMapCalloutView calloutView) {
+        this.calloutView = calloutView;
+    }
+
     private MarkerOptions createMarkerOptions() {
         MarkerOptions options = new MarkerOptions().position(position);
-        if (anchorX != null && anchorY != null) {
-            options.anchor(anchorX, anchorY);
-        }
-        if (calloutAnchorX != null && calloutAnchorY != null) {
-            options.setInfoWindowOffset(calloutAnchorX, calloutAnchorY);
-        }
+        options.anchor(anchorX, anchorY);
+        options.setInfoWindowOffset(calloutAnchorX, calloutAnchorY);
         options.title(title);
         options.snippet(subtitle);
         options.draggable(draggable);
-        options.visible(true);
         options.icon(getIcon());
         return options;
     }
 
     private BitmapDescriptor getIcon() {
-//        if (hasCallout) {
-//            // creating a bitmap from an arbitrary view
-//            return BitmapDescriptorFactory.fromBitmap(createDrawable());
-//        } else if (iconBitmapDescriptor != null) {
-//            // use local image as a marker
-//            return iconBitmapDescriptor;
-//        } else {
-        return BitmapDescriptorFactory.defaultMarker(this.pinColor);
-//        }
-    }
+        if (this.calloutView != null) {
+//            return BitmapDescriptorFactory.fromView(this.calloutView);
+        }
 
+        return BitmapDescriptorFactory.defaultMarker(this.pinColor);
+    }
 }

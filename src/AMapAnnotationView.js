@@ -37,9 +37,9 @@ class AMapAnnotationView extends React.Component {
     ...View.propTypes,
   };
 
-  _onSelect(e) {
-    if (this.onSelect) {
-      this.onSelect(e);
+  _onSelect(event) {
+    if (this.props.onSelect) {
+      this.props.onSelect(event);
     }
   }
 
@@ -49,12 +49,21 @@ class AMapAnnotationView extends React.Component {
       image = resolveAssetSource(this.props.image) || {};
       image = image.uri;
     }
-    return (
-      <RCTAMapAnnotationView {...this.props}
-        image={image}
-        onSelect={this._onSelect}
-        style={[styles.marker, this.props.style]} />
-    );
+    if (Platform.OS === 'ios') {
+      return (
+        <RCTAMapAnnotationView {...this.props}
+          image={image}
+          onSelect={e => this._onSelect(e)}
+          style={[styles.marker, this.props.style]} />
+      );
+    } else {
+      eturn (
+        <RCTAMapAnnotationView {...this.props}
+          image={image}
+          onPress={e => this._onSelect(e)}
+          style={[styles.marker, this.props.style]} />
+      );
+    }
   }
 }
 
