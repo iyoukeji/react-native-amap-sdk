@@ -1,14 +1,12 @@
 package com.starlight36.react.amap;
 
 import android.content.Context;
-import android.view.View;
 
 import com.amap.api.maps.model.BitmapDescriptor;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
-import com.facebook.react.views.view.ReactViewGroup;
 
 public class ReactAMapAnnotationView extends ReactAMapFeatureView<Marker> {
 

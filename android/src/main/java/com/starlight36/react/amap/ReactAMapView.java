@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ReactAMapView extends MapView implements LocationSource, LifecycleEventListener {
+public class ReactAMapView extends MapView implements LocationSource, AMapLocationListener, LifecycleEventListener {
 
     private final AMapOptions options = new AMapOptions();
     private final ReactContext reactContext;
@@ -37,10 +37,13 @@ public class ReactAMapView extends MapView implements LocationSource, LifecycleE
     private boolean mapLoaded = false;
     private LatLngBounds defaultBounds;
     private AMapLocationClient locationClient;
+    private OnLocationChangedListener locationChangedListener;
 
     public ReactAMapView(Context context) {
         super(context);
         this.reactContext = (ReactContext) getContext();
+        this.locationClient = new AMapLocationClient(reactContext);
+        this.locationClient.setLocationListener(this);
         this.getMapFragmentDelegate().setOptions(this.options);
         this.getMap().setLocationSource(this);
         this.setListeners();
@@ -106,6 +109,27 @@ public class ReactAMapView extends MapView implements LocationSource, LifecycleE
         if (featureView instanceof ReactAMapAnnotationView) {
             annotationViewMap.remove(featureView);
         }
+    }
+
+    @Override
+    public void onLocationChanged(AMapLocation aMapLocation) {
+        if (this.locationChangedListener != null) {
+            locationChangedListener.onLocationChanged(aMapLocation);
+        }
+    }
+
+    @Override
+    public void activate(final OnLocationChangedListener onLocationChangedListener) {
+        this.locationChangedListener = onLocationChangedListener;
+        locationClient.startLocation();
+    }
+
+    @Override
+    public void deactivate() {
+        locationClient.stopLocation();
+        this.locationChangedListener = null;
+        locationClient.setLocationListener(null);
+        locationClient.onDestroy();
     }
 
     private void setListeners() {
@@ -184,23 +208,5 @@ public class ReactAMapView extends MapView implements LocationSource, LifecycleE
                 );
             }
         });
-    }
-
-    @Override
-    public void activate(final OnLocationChangedListener onLocationChangedListener) {
-        locationClient = new AMapLocationClient(getContext());
-        locationClient.setLocationListener(new AMapLocationListener() {
-            @Override
-            public void onLocationChanged(AMapLocation aMapLocation) {
-                onLocationChangedListener.onLocationChanged(aMapLocation);
-            }
-        });
-        locationClient.startLocation();
-    }
-
-    @Override
-    public void deactivate() {
-        locationClient.stopLocation();
-        locationClient.onDestroy();
     }
 }

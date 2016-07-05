@@ -57,7 +57,7 @@ class AMapAnnotationView extends React.Component {
           style={[styles.marker, this.props.style]} />
       );
     } else {
-      eturn (
+      return (
         <RCTAMapAnnotationView {...this.props}
           image={image}
           onPress={e => this._onSelect(e)}

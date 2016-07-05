@@ -172,8 +172,8 @@ public class ReactAMapViewManager extends ViewGroupManager<ReactAMapView> {
 
     @Override
     public void onDropViewInstance(ReactAMapView view) {
+        view.onDestroy();
         listeners.remove(view);
-        super.onDropViewInstance(view);
     }
 
     @Override
@@ -206,4 +206,6 @@ public class ReactAMapViewManager extends ViewGroupManager<ReactAMapView> {
                 "onUpdateLocation", MapBuilder.of("registrationName", "onUpdateLocation")
         );
     }
+
+
 }
