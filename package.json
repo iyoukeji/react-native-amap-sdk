@@ -1,0 +1,21 @@
+{
+  "name": "react-native-amap-sdk",
+  "version": "0.0.2",
+  "description": "AMap sdk for react native.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "android",
+    "ios",
+    "src",
+    "index.js"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "react": "^15.1.0",
+    "react-native": "^0.28.0"
+  }
+}

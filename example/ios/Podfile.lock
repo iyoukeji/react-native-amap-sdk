@@ -1,0 +1,48 @@
+PODS:
+  - AMap3DMap (4.0.3):
+    - AMapFoundation (~> 1.0)
+  - AMapFoundation (1.1.0)
+  - AMapLocation (2.0.0):
+    - AMapFoundation (~> 1.0)
+  - AMapSearch (4.1.0):
+    - AMapFoundation (~> 1.0)
+  - RCTAMap (0.0.1):
+    - AMap3DMap
+    - AMapLocation
+    - AMapSearch
+  - React/Core (0.28.0)
+  - React/RCTImage (0.28.0):
+    - React/Core
+    - React/RCTNetwork
+  - React/RCTNetwork (0.28.0):
+    - React/Core
+  - React/RCTText (0.28.0):
+    - React/Core
+  - React/RCTWebSocket (0.28.0):
+    - React/Core
+
+DEPENDENCIES:
+  - RCTAMap (from `../../ios`)
+  - React/Core (from `../node_modules/react-native`)
+  - React/RCTImage (from `../node_modules/react-native`)
+  - React/RCTNetwork (from `../node_modules/react-native`)
+  - React/RCTText (from `../node_modules/react-native`)
+  - React/RCTWebSocket (from `../node_modules/react-native`)
+
+EXTERNAL SOURCES:
+  RCTAMap:
+    :path: ../../ios
+  React:
+    :path: ../node_modules/react-native
+
+SPEC CHECKSUMS:
+  AMap3DMap: 8619d67fe7b3bbe45abf74b3434eb9ab20220507
+  AMapFoundation: 15db20567e6512422a086a01b42a88b145bc2500
+  AMapLocation: 40141a31e7c584e59d590079eb8e565a90ecdf4d
+  AMapSearch: cb4722480d2d4331a032d43bd1070ed0fa55dac9
+  RCTAMap: 59b6805bf597648005be9e73f62691d0984a138b
+  React: 43544faed4af6a0e8fbc4b3abd26141ed654fa49
+
+PODFILE CHECKSUM: 38007fc1c0771e2c856578b8e46cb4c310ea3c58
+
+COCOAPODS: 1.0.0.rc.2

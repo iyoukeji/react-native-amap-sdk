@@ -1,0 +1,5 @@
+rootProject.name = 'Example'
+
+include ':app'
+include ':react-native-amap'
+project(':react-native-amap').projectDir = new File(rootProject.projectDir, '../../android/')
