@@ -24,6 +24,29 @@ public class ReactAMapViewManager extends ViewGroupManager<ReactAMapView> {
     private List<ReactAMapView> listeners = new ArrayList<>();
     private Bundle savedInstanceState;
 
+    @Override
+    public String getName() {
+        return REACT_CLASS;
+    }
+
+    @Override
+    protected ReactAMapView createViewInstance(ThemedReactContext reactContext) {
+        ReactAMapView mapView = new ReactAMapView(reactContext);
+
+        mapView.onCreate(savedInstanceState);
+        reactContext.addLifecycleEventListener(mapView);
+        this.listeners.add(mapView);
+        mapView.getMap().runOnDrawFrame();
+
+        return mapView;
+    }
+
+    @Override
+    public void onDropViewInstance(ReactAMapView view) {
+        view.onDestroy();
+        listeners.remove(view);
+    }
+
     public void onCreate(Bundle savedInstanceState) {
         this.savedInstanceState = savedInstanceState;
         for (ReactAMapView listener : listeners) {
@@ -151,29 +174,6 @@ public class ReactAMapViewManager extends ViewGroupManager<ReactAMapView> {
                 map.getDouble("longitude"),
                 map.getDouble("latitudeDelta"),
                 map.getDouble("longitudeDelta"));
-    }
-
-    @Override
-    public String getName() {
-        return REACT_CLASS;
-    }
-
-    @Override
-    protected ReactAMapView createViewInstance(ThemedReactContext reactContext) {
-        ReactAMapView mapView = new ReactAMapView(reactContext);
-
-        mapView.onCreate(savedInstanceState);
-        reactContext.addLifecycleEventListener(mapView);
-        this.listeners.add(mapView);
-        mapView.getMap().runOnDrawFrame();
-
-        return mapView;
-    }
-
-    @Override
-    public void onDropViewInstance(ReactAMapView view) {
-        view.onDestroy();
-        listeners.remove(view);
     }
 
     @Override
