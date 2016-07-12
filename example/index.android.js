@@ -12,7 +12,7 @@ import {
   View,
   TouchableHighlight,
 } from 'react-native';
-import { AMapView, AMapLocationManager } from 'react-native-amap-all';
+import { AMapView, AMapLocationManager } from 'react-native-amap-sdk';
 
 class Example extends Component {
   state = {
