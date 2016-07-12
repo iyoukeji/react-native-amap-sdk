@@ -1,12 +1,30 @@
 package com.starlight36.react.amap;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.NinePatch;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
+import android.media.Image;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.amap.api.maps.model.BitmapDescriptor;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
+import com.amap.api.maps.model.Text;
+
+import java.io.InputStream;
 
 public class ReactAMapAnnotationView extends ReactAMapFeatureView<Marker> {
 
@@ -31,9 +49,11 @@ public class ReactAMapAnnotationView extends ReactAMapFeatureView<Marker> {
     private ReactAMapCalloutView calloutView;
 
     private boolean hasCallout = false;
+    private Context context;
 
     public ReactAMapAnnotationView(Context context) {
         super(context);
+        this.context = context;
     }
 
     @Override
@@ -79,7 +99,7 @@ public class ReactAMapAnnotationView extends ReactAMapFeatureView<Marker> {
     public void setPinColor(float pinColor) {
         this.pinColor = pinColor;
         if (marker != null) {
-            marker.setIcon(getIcon());
+            marker.setIcon(getIcon(true));
         }
     }
 
@@ -136,18 +156,36 @@ public class ReactAMapAnnotationView extends ReactAMapFeatureView<Marker> {
         MarkerOptions options = new MarkerOptions().position(position);
         options.anchor(anchorX, anchorY);
         options.setInfoWindowOffset(calloutAnchorX, calloutAnchorY);
-        options.title(title);
-        options.snippet(subtitle);
+//        options.title(title);
+//        options.snippet(subtitle);
         options.draggable(draggable);
-        options.icon(getIcon());
+        options.icon(getIcon(true));
         return options;
     }
 
-    private BitmapDescriptor getIcon() {
-        if (this.calloutView != null) {
-//            return BitmapDescriptorFactory.fromView(this.calloutView);
+    public BitmapDescriptor getIcon(boolean isInfoWindowShown) {
+        View marker = LayoutInflater.from(getContext()).inflate(R.layout.marker, null);
+        LinearLayout info_window = (LinearLayout) marker.findViewById(R.id.info_window);
+        TextView info_window_title = (TextView) marker.findViewById(R.id.info_window_title);
+        info_window_title.setText(title);
+        TextView info_window_subTitle = (TextView) marker.findViewById(R.id.info_window_subTitle);
+        info_window_subTitle.setText(subtitle);
+        ImageView icon = (ImageView) marker.findViewById(R.id.icon);
+        try {
+            Drawable drawable = NinePatchUtils.decodeDrawableFromAsset(getContext(), "infowindow_bg.9.png");
+            InputStream is = BitmapDescriptorFactory.class.getResourceAsStream("/assets/" + "ORANGE.png");
+            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            info_window.setBackground(drawable);
+            icon.setImageBitmap(bitmap);
+        } catch (Exception e) {
+        }
+        if (isInfoWindowShown) {
+            info_window.setVisibility(View.VISIBLE);
+        } else {
+            info_window.setVisibility(View.INVISIBLE);
         }
 
-        return BitmapDescriptorFactory.defaultMarker(this.pinColor);
+        return BitmapDescriptorFactory.fromView(marker);
+
     }
 }

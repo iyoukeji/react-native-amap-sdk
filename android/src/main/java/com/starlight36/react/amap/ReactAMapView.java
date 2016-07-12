@@ -1,8 +1,16 @@
 package com.starlight36.react.amap;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -12,16 +20,20 @@ import com.amap.api.maps.AMapOptions;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
+import com.amap.api.maps.model.BitmapDescriptor;
+import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.Marker;
+import com.amap.api.maps.model.MyLocationStyle;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +50,7 @@ public class ReactAMapView extends MapView implements LocationSource, AMapLocati
     private LatLngBounds defaultBounds;
     private AMapLocationClient locationClient;
     private OnLocationChangedListener locationChangedListener;
+    private boolean isInfoWindowShown = true;
 
     public ReactAMapView(Context context) {
         super(context);
@@ -169,16 +182,12 @@ public class ReactAMapView extends MapView implements LocationSource, AMapLocati
                 );
             }
         });
-
         // 标记选中监听器
         this.getMap().setOnMarkerClickListener(new AMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if (marker.isInfoWindowShown()) {
-                    marker.hideInfoWindow();
-                } else {
-                    marker.showInfoWindow();
-                }
+                isInfoWindowShown = !isInfoWindowShown;
+                marker.setIcon(annotationViewMap.get(marker).getIcon(isInfoWindowShown));
                 WritableMap event = Arguments.createMap();
                 reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
                         annotationViewMap.get(marker).getId(),
@@ -188,7 +197,6 @@ public class ReactAMapView extends MapView implements LocationSource, AMapLocati
                 return true;
             }
         });
-
         // 当前位置改变监听器
         this.getMap().setOnMyLocationChangeListener(new AMap.OnMyLocationChangeListener() {
             @Override
