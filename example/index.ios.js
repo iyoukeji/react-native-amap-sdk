@@ -12,7 +12,7 @@ import {
   View,
   TouchableHighlight,
 } from 'react-native';
-import { AMapView, AMapLocationManager } from 'react-native-amap-all';
+import { AMapView, AMapLocationManager } from 'react-native-amap-sdk';
 
 class Example extends Component {
   state = {
@@ -41,9 +41,12 @@ class Example extends Component {
         <View style={{flex: 1, justifyContent: 'center'}}>
           <TouchableHighlight onPress={() => {
             AMapLocationManager.requestCurrentLocation(2, 10, 10)
-              .then(location => console.log(location))
+              .then(location => console.log('requestCurrentLocation', location))
               .catch(err => console.log(err));
-            // AMapLocationManager.startUpdatingLocation(false, location => console.log(location));
+            {/*AMapLocationManager.startUpdatingLocation(false, location => {*/}
+              {/*console.log('startUpdatingLocation', location);*/}
+              {/*this.setState({"latitude": location.latitude, "longitude": location.longitude});*/}
+            {/*});*/}
           }}>
             <Text>动作</Text>
           </TouchableHighlight>
